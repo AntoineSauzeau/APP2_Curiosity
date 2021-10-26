@@ -135,9 +135,9 @@ int interprete (sequence_t* seq, bool debug)
             empiler_e(&pile, elt2);
         }
         else if(commande_c == '!'){
-            sequence_t *seq = depiler_l(&pile);
+            sequence_t *seq_ = depiler_l(&pile);
 
-            ret = interprete(seq, true);
+            ret = interprete(seq_, true);
             if (ret == VICTOIRE) return VICTOIRE; /* on a atteint la cible */
             if (ret == RATE)     return RATE; 
         }

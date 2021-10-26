@@ -110,7 +110,6 @@ int conversion (char *texte, sequence_t *seq)
     }
 
     return strlen(texte);
-    
 }
 
 
