@@ -56,7 +56,20 @@ sequence_t *sommet_l(pile_t *pile)
     return pile->arr[pile->taille - 1].l; 
 }
 
-void afficherPile(pile_t *pile){
+int getPileTaille(pile_t *pile)
+{
+    return pile->taille;
+}
+
+void free_element_e(pile_elt_t *elt)
+{
+    if(elt->type == 1){
+        detruireSeq(elt->l);
+    }
+}
+
+void afficherPile(pile_t *pile)
+{
 
     for(int i = 0; i < pile->taille; i++){
 

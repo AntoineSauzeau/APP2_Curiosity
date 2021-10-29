@@ -184,11 +184,11 @@ int main(int argc, char *argv[]) {
     struct rlimit rl;
     getrlimit(RLIMIT_STACK, &rl);
 
-    rl.rlim_cur = 1000000000000;
+    rl.rlim_cur = 1000000000000000;
     if(setrlimit(RLIMIT_STACK, &rl) == -1)
     {
         perror("Erreur setrlimit");
-        return;
+        return -1;
     }
 
     int arg;
