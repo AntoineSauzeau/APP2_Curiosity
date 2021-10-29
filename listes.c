@@ -55,7 +55,12 @@ void ajouterTeteSeq(sequence_t* seq, cellule_t *cell){
 
 cellule_t* nouvelleCellule (void)
 {
-    cellule_t *n_cell = malloc(sizeof(cellule_t));
+    cellule_t *n_cell = 0;
+
+    n_cell = malloc(sizeof(cellule_t));
+    if(n_cell == 0){
+        perror("Erreur : ");
+    }
 
     return n_cell;
 }
@@ -71,8 +76,6 @@ int conversion (char *texte, sequence_t *seq)
     if(seq->tete != 0){
         detruireSeq(seq);
     }
-
-    printf("Texte : %s", texte);
 
     sequence_t *r_seq = NULL;
 
@@ -93,7 +96,6 @@ int conversion (char *texte, sequence_t *seq)
             cell->type = 1;
 
             ajouterFinSeq(seq, cell);
-            int d = 0;
         }
         else if(texte[i] == '}'){
             return i;
@@ -105,8 +107,6 @@ int conversion (char *texte, sequence_t *seq)
 
             ajouterFinSeq(seq, cell);
         }
-
-        afficherListe(seq);
     }
 
     return strlen(texte);
@@ -146,6 +146,11 @@ void afficherListe(sequence_t* seq)
 
 void detruireSeq(sequence_t *seq)
 {
+
+    if(seq->tete == 0){
+        return;
+    }
+
     cellule_t *cell_s = seq->tete;
     cellule_t *cell_p = 0;
 
@@ -163,12 +168,25 @@ void detruireSeq(sequence_t *seq)
 
 sequence_t *clonerList(sequence_t *seq)
 {
-    sequence_t *n_list = malloc(sizeof(sequence_t));
+    sequence_t *n_list = NULL;
 
-    cellule_t *cell_s = seq->tete;
+    n_list = malloc(sizeof(sequence_t));
+    if(n_list == NULL){
+        perror("Erreur : ");
+    }
+
+    cellule_t *cell_s = NULL;
+    cell_s = seq->tete;
     while(cell_s != 0){
 
-        cellule_t *n_cell = malloc(sizeof(cellule_t));
+        cellule_t *n_cell = NULL;
+        n_cell = malloc(sizeof(cellule_t));
+        if(n_cell == NULL){
+            perror("Erreur : ");
+        }
+
+        n_cell->type = cell_s->type;
+
         if(cell_s->type == 0){
             n_cell->command_c = cell_s->command_c;
         }

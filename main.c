@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <sys/resource.h>
 #ifdef NCURSES
 #include <ncurses.h>
 #endif
@@ -179,6 +180,17 @@ void read_test_file (char* fichier, bool debug)
 
 
 int main(int argc, char *argv[]) {
+
+    struct rlimit rl;
+    getrlimit(RLIMIT_STACK, &rl);
+
+    rl.rlim_cur = 1000000000000;
+    if(setrlimit(RLIMIT_STACK, &rl) == -1)
+    {
+        perror("Erreur setrlimit");
+        return;
+    }
+
     int arg;
     bool debug = false;
     char *fichier = NULL;

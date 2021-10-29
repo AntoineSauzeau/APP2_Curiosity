@@ -17,6 +17,9 @@
  *
  */
 
+pile_t pile;
+bool pile_init_b = false;
+
 void stop (void)
 {
     char enter = '\0';
@@ -34,24 +37,24 @@ int interprete (sequence_t* seq, bool debug)
     char commande_c;
     sequence_t *commande_l;
 
-
+    if(!pile_init_b){
+        initPile(&pile);
+        pile_init_b = true;
+    }
 
     //debug = true; /* À enlever par la suite et utiliser "-d" sur la ligne de commandes */
 
     printf ("XProgramme:");
-    afficherListe(seq);
-    printf ("\n");
-    if (debug) stop();
+    //afficherListe(seq);
+    //printf ("\n");
+    //if (debug) stop();
 
     // À partir d'ici, beaucoup de choses à modifier dans la suite.
-    printf("\n>>>>>>>>>>> A Faire : interprete.c/interprete() <<<<<<<<<<<<<<<<\n");
+    //printf("\n>>>>>>>>>>> A Faire : interprete.c/interprete() <<<<<<<<<<<<<<<<\n");
     int ret;         //utilisée pour les valeurs de retour
     
     int n = 0;
     sequence_t *cmd = 0;
-
-    pile_t pile;
-    initPile(&pile);
 
     int op1, op2 = 0;
 
@@ -114,9 +117,11 @@ int interprete (sequence_t* seq, bool debug)
             int n = depiler_i(&pile);
             if(n){
                 ret = interprete(V, true);
+                //detruireSeq(F);
             }
             else{
                 ret = interprete(F, true);
+                //detruireSeq(V);
             }
 
             if (ret == VICTOIRE) return VICTOIRE; /* on a atteint la cible */
@@ -138,6 +143,8 @@ int interprete (sequence_t* seq, bool debug)
             sequence_t *seq_ = depiler_l(&pile);
 
             ret = interprete(seq_, true);
+            detruireSeq(seq_);
+
             if (ret == VICTOIRE) return VICTOIRE; /* on a atteint la cible */
             if (ret == RATE)     return RATE; 
         }
@@ -151,8 +158,10 @@ int interprete (sequence_t* seq, bool debug)
         else if (commande_c == 'R'){
             int x = depiler_i(&pile);
             int n_ = depiler_i(&pile);
+
             pile_t pile_s1;
             initPile(&pile_s1);
+
             pile_t pile_s2;
             initPile(&pile_s2);
 
@@ -185,7 +194,43 @@ int interprete (sequence_t* seq, bool debug)
             empiler_e(&pile, elt2);
         }
         else if(commande_c == 'I'){
-            depiler_e(&pile);
+            pile_elt_t elt = depiler_e(&pile);
+            free_element_e(&elt);
+        }
+        else if(commande_c == 'Z'){
+
+            if(getPileTaille(&pile) > 3){
+            
+                pile_t pile_sec;
+                initPile(&pile_sec);
+
+                sequence_t *F_d = depiler_l(&pile);
+                sequence_t *V_d = depiler_l(&pile);
+                int n_d = depiler_i(&pile);
+
+                int taille_pile = getPileTaille(&pile);
+                for(int i = 0; i < taille_pile - 3; i++){
+                    empiler_e(&pile_sec, depiler_e(&pile));
+                }
+            
+                int n_f = depiler_i(&pile);
+                sequence_t *V_f = depiler_l(&pile);
+                sequence_t *F_f = depiler_l(&pile);
+
+                empiler_l(&pile, F_d);
+                empiler_l(&pile, V_d);
+                empiler_i(&pile, 0);
+
+                int taille_pile_sec = getPileTaille(&pile_sec);
+                for(int i = 0; i < taille_pile_sec; i++){
+                    empiler_e(&pile, depiler_e(&pile_sec));
+                }
+
+                empiler_i(&pile, 0);
+                empiler_l(&pile, F_f);
+                empiler_l(&pile, V_f);
+            }
+
         }
         else{
             eprintf("Caractère inconnu: '%c'\n", commande_c);
@@ -210,6 +255,9 @@ int interprete (sequence_t* seq, bool debug)
         else{
             cell_s = cell_s->suivant;
         }
+        
+        //detruireSeq(seq);
+
         printf("Pile : ");
         afficherPile(&pile);
         printf("\nListe : ");
@@ -218,7 +266,7 @@ int interprete (sequence_t* seq, bool debug)
         printf ("\n");
         afficherCarte();
         printf ("\n##############################\n");
-        if (debug) stop();
+        //if (debug) stop();
     }
 
     /* Si on sort de la boucle sans arriver sur la cible,
